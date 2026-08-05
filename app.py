@@ -14,7 +14,7 @@ st.set_page_config(
 
 DATA_FILE = Path("FTE dashboard data.xlsx")
 
-st.sidebar.title("📊 CSHAD MONTHLY VOLUME AND FTE REPORT")
+st.sidebar.title("📊VOLUME & FTE")
 
 if not DATA_FILE.exists():
     st.error("Không tìm thấy file FTE dashboard data.xlsx. Hãy đặt file cùng thư mục với app.py.")
