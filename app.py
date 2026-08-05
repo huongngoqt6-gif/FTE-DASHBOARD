@@ -65,7 +65,7 @@ def filter_by_month(df, month_col="Month"):
 def custom_metric_card(value, label):
     st.markdown(f"""
     <div style="
-        background-color: #f1f3f5;
+        background-color: ##F5F7FA;
         border: 1px solid #e9ecef;
         border-radius: 12px;
         padding: 18px 12px;
