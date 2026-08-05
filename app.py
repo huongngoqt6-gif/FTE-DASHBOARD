@@ -151,18 +151,25 @@ st.divider()
 if page == "Overview":
     st.title("VOLUME & FTE OVERVIEW")
     
-    # Lọc dữ liệu
+    # Lọc dữ liệu sheet HC
     hc_filtered = filter_by_month(df_hc)
     
-    # Tính toán Metrics
-    approved_hc = 11
-    required_hc = hc_filtered['Required HC'].dropna().mean()
-    workload_pct = hc_filtered['% Worload'].dropna().mean() if '% Worload' in hc_filtered.columns else hc_filtered['% Workload'].dropna().mean()
+    # Xác định tên cột Shipment volume (Cột G trong sheet HC)
+    shipment_col = None
+    for col in hc_filtered.columns:
+        if 'shipment' in col.lower() and 'volume' in col.lower():
+            shipment_col = col
+            break
+    if not shipment_col and len(hc_filtered.columns) >= 7:
+        shipment_col = hc_filtered.columns[6] # Lấy cột chỉ số 6 (Cột G) nếu tên không khớp tuyệt đối
     
-    # Lọc shipment volume
-    valid_month_cols = [m for m in selected_months if m in df_monthly_vol.columns]
-    if valid_month_cols:
-        shipment_volume = df_monthly_vol[valid_month_cols].sum().mean()
+   # Tính toán Metrics
+    approved_hc = 11
+    required_hc = hc_filtered['Required HC'].dropna().mean() if 'Required HC' in hc_filtered.columns else 0
+    workload_pct = hc_filtered['% Worload'].dropna().mean() if '% Worload' in hc_filtered.columns else (hc_filtered['% Workload'].dropna().mean() if '% Workload' in hc_filtered.columns else 0)
+    
+    if shipment_col and shipment_col in hc_filtered.columns:
+        shipment_volume = hc_filtered[shipment_col].dropna().mean()
     else:
         shipment_volume = 0
         
@@ -179,18 +186,64 @@ if page == "Overview":
     with col3:
         custom_metric_card(val_workload, "% Workload")
     with col4:
-        custom_metric_card(val_shipment, "Shipment Volume")
+        custom_metric_card(val_shipment, "Shipment Volume (Avg)")
     
-    st.subheader("Mối liên hệ giữa các chỉ số Overview")
-    fig1 = go.Figure()
-    fig1.add_trace(go.Bar(x=["Approved HC", "Required HC"], y=[approved_hc, required_hc], name="HC"))
-    fig1.add_trace(go.Scatter(x=["% Workload"], y=[workload_pct], mode="markers+text", marker=dict(size=20, color="orange"), name="Workload", text=[f"{workload_pct:.1%}"], yaxis="y2"))
+    st.subheader("Mối liên hệ giữa Shipment Volume, Required HC và Approved HC theo tháng")
     
-    fig1.update_layout(
-        yaxis2=dict(title="% Workload", overlaying="y", side="right"),
-        barmode='group'
-    )
-    st.plotly_chart(fig1, use_container_width=True)
+    if not hc_filtered.empty:
+        fig1 = go.Figure()
+
+        # 1. Biểu đồ Cột: Shipment Volume từ Cột G sheet HC (Trục Y bên trái)
+        if shipment_col and shipment_col in hc_filtered.columns:
+            fig1.add_trace(go.Bar(
+                x=hc_filtered['Month'],
+                y=hc_filtered[shipment_col],
+                name='Shipment Volume',
+                marker_color='#93c5fd',
+                text=hc_filtered[shipment_col].apply(lambda x: f"{x:,.0f}" if pd.notna(x) and x > 0 else ""),
+                textposition='auto',
+                yaxis='y'
+            ))
+
+        # 2. Biểu đồ Đường: Required HC từ Cột D sheet HC (Trục Y bên phải)
+        if 'Required HC' in hc_filtered.columns:
+            fig1.add_trace(go.Scatter(
+                x=hc_filtered['Month'],
+                y=hc_filtered['Required HC'],
+                mode='lines+markers+text',
+                name='Required HC',
+                line=dict(color='#ef4444', width=2.5),
+                text=hc_filtered['Required HC'].round(1),
+                textposition='top center',
+                yaxis='y2'
+            ))
+
+        # 3. Biểu đồ Đường: Approved HC từ Cột B sheet HC (Trục Y bên phải)
+        if 'Approved HC' in hc_filtered.columns:
+            fig1.add_trace(go.Scatter(
+                x=hc_filtered['Month'],
+                y=hc_filtered['Approved HC'],
+                mode='lines+markers+text',
+                name='Approved HC',
+                line=dict(color='#1e3e62', width=2, dash='dash'),
+                text=hc_filtered['Approved HC'],
+                textposition='top center',
+                yaxis='y2'
+            ))
+
+        fig1.update_layout(
+            xaxis=dict(title="Tháng"),
+            yaxis=dict(title="Shipment Volume", showgrid=False),
+            yaxis2=dict(title="Headcount (HC)", overlaying="y", side="right", showgrid=False),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=30, b=20, l=20, r=20),
+            hovermode="x unified"
+        )
+        st.plotly_chart(fig1, use_container_width=True)
+    else:
+        st.warning("Không có dữ liệu cho các tháng đã chọn.")
 
 
 elif page == "HC Status":
