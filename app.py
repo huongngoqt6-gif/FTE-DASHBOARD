@@ -25,9 +25,9 @@ st.markdown("""
         padding-bottom: 1rem !important;
     }
     
-    /* 3. Thanh Sidebar (khu vực lựa chọn trang & tháng) màu Xanh Navy đậm */
+    /* 3. Thanh Sidebar (khu vực lựa chọn trang & tháng) màu Xanh tím */
     [data-testid="stSidebar"] {
-        background-color: #0b192c !important;
+        background-color: #4D44B5 !important;
     }
     
     /* Đổi màu chữ và icon trong Sidebar thành màu trắng */
