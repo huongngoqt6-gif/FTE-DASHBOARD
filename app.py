@@ -154,7 +154,7 @@ if page == "Overview":
     # Lọc dữ liệu sheet HC
     hc_filtered = filter_by_month(df_hc)
     
-shipment_col = 'Shipment Volume'
+    shipment_col = 'Shipment Volume'
     
    # Tính toán Metrics
     approved_hc = 11
