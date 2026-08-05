@@ -11,6 +11,53 @@ st.set_page_config(
     page_icon="📊",
     layout="wide",
 )
+# Custom CSS giao diện
+st.markdown("""
+    <style>
+    /* 1. Nền giao diện chính màu xám nhạt */
+    .stApp {
+        background-color: #f4f6f9;
+    }
+    
+    /* 2. Thanh Sidebar (khu vực lựa chọn trang & tháng) màu Xanh Navy đậm */
+    [data-testid="stSidebar"] {
+        background-color: #0b192c !important;
+    }
+    
+    /* Đổi màu chữ và icon trong Sidebar thành màu trắng */
+    [data-testid="stSidebar"] * {
+        color: #ffffff !important;
+    }
+    
+    /* Style cho các tag chọn tháng trong Multiselect */
+    span[data-baseweb="tag"] {
+        background-color: #1e3e62 !important;
+        color: #ffffff !important;
+    }
+    
+    /* 3. Thu nhỏ Header và đổi màu chữ sang Xanh Navy */
+    h1, .stTitle {
+        font-size: 24px !important;
+        color: #0b192c !important;
+        font-weight: 700 !important;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
+    }
+    
+    h2, h3, .stHeader {
+        font-size: 18px !important;
+        color: #1e3e62 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Tùy chỉnh vạch phân cách */
+    hr {
+        margin-top: 5px !important;
+        margin-bottom: 15px !important;
+        border-color: #cbd5e1 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 DATA_FILE = Path("FTE dashboard data.xlsx")
 
