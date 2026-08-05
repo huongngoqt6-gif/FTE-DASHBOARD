@@ -87,7 +87,9 @@ def custom_metric_card(value, label):
         ">{label}</div>
     </div>
     """, unsafe_allow_html=True)
-
+# TIÊU ĐỀ CHUNG HIỂN THỊ TRÊN TẤT CẢ CÁC TRANG
+st.title("CSHAD - VOLUME & FTE DASHBOARD")
+st.divider()
 
 if page == "Overview":
     st.title("VOLUME & FTE OVERVIEW")
