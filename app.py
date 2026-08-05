@@ -219,11 +219,11 @@ elif page == "HC Status":
     with col4:
         custom_metric_card(val_workload, "% Workload")
     
-    st.subheader("Mối liên hệ & khoảng Gap giữa Available HC vs Required HC theo tháng")
+    st.subheader("VOLUME & HC TREND")
     if not hc_filtered.empty:
         fig_hc = go.Figure()
 
-        # Đường 1: Required HC
+       # Đường 1: Required HC
         fig_hc.add_trace(go.Scatter(
             x=hc_filtered['Month'],
             y=hc_filtered['Required HC'],
@@ -258,11 +258,14 @@ elif page == "HC Status":
             line=dict(color='#3b82f6', width=2, dash='dash')
         ))
 
-        fig_hc.update_layout(
+       fig_hc.update_layout(
             xaxis_title="Tháng",
             yaxis_title="Headcount (HC)",
             hovermode="x unified",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=20, b=20, l=20, r=20)
         )
         st.plotly_chart(fig_hc, use_container_width=True)
     else:
@@ -272,6 +275,7 @@ elif page == "HC Status":
     cs_filtered = filter_by_month(df_cs_fte_melted)
     if not cs_filtered.empty:
         fig_trend = px.line(cs_filtered, x="Month", y="FTE", color="CS PIC", markers=True)
+        fig_trend.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(t=20, b=20, l=20, r=20))
         st.plotly_chart(fig_trend, use_container_width=True)
     else:
         st.warning("Không có dữ liệu cho các tháng đã chọn.")
