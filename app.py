@@ -14,7 +14,7 @@ st.set_page_config(
 
 DATA_FILE = Path("FTE dashboard data.xlsx")
 
-st.sidebar.title("📊VOLUME & FTE")
+st.sidebar.title("📊 Điều hướng")
 
 if not DATA_FILE.exists():
     st.error("Không tìm thấy file FTE dashboard data.xlsx. Hãy đặt file cùng thư mục với app.py.")
@@ -53,13 +53,14 @@ df_cs_fte_melted = df_cs_fte.melt(id_vars=["CS PIC"], var_name="Month", value_na
 df_cs_fte_melted = df_cs_fte_melted[df_cs_fte_melted['FTE'].notna()]
 
 # CHỌN TRANG
-page = st.sidebar.radio("DASHBOARD MENU", ["Overview", "HC Status", "Monthly Volume"])
+page = st.sidebar.radio("Chọn Trang", ["1. Overview", "2. HC Overview", "3. Monthly Volume"])
 
 # HÀM LỌC DỮ LIỆU CHUNG
 def filter_by_month(df, month_col="Month"):
     if not selected_months:
         return df.iloc[0:0] # Trả về df rỗng nếu không chọn tháng nào
     return df[df[month_col].astype(str).isin(selected_months)].copy()
+
 # HÀM TẠO CARD THÔNG TIN (Số ở trên, Chữ ở dưới, ô xám bo tròn)
 def custom_metric_card(value, label):
     st.markdown(f"""
@@ -86,8 +87,10 @@ def custom_metric_card(value, label):
         ">{label}</div>
     </div>
     """, unsafe_allow_html=True)
-if page == "Overview":
-    st.title("Monthly Volume & FTE Overview")
+
+
+if page == "1. Overview":
+    st.title("Trang 1: Overview")
     
     # Lọc dữ liệu
     hc_filtered = filter_by_month(df_hc)
@@ -100,21 +103,28 @@ if page == "Overview":
     # Lọc shipment volume (Trung bình tổng volume các cột tháng được chọn trong Monthly volume)
     valid_month_cols = [m for m in selected_months if m in df_monthly_vol.columns]
     if valid_month_cols:
-        shipment_volume = df_monthly_vol[valid_month_cols].sum().mean() # Tổng theo tháng, sau đó lấy trung bình
+        shipment_volume = df_monthly_vol[valid_month_cols].sum().mean()
     else:
         shipment_volume = 0
         
+    val_approved = f"{approved_hc}"
+    val_required = f"{required_hc:.2f}" if not np.isnan(required_hc) else "0"
+    val_workload = f"{workload_pct * 100:.2f}%" if not np.isnan(workload_pct) else "0%"
+    val_shipment = f"{shipment_volume:,.0f}" if not np.isnan(shipment_volume) else "0"
+
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Approved HC", approved_hc)
-    col2.metric("Required HC", f"{required_hc:.2f}" if not np.isnan(required_hc) else "0")
-    col3.metric("% Workload", f"{workload_pct * 100:.2f}%" if not np.isnan(workload_pct) else "0%")
-    col4.metric("Shipment Volume", f"{shipment_volume:,.0f}" if not np.isnan(shipment_volume) else "0")
+    with col1:
+        custom_metric_card(val_approved, "Approved HC")
+    with col2:
+        custom_metric_card(val_required, "Required HC")
+    with col3:
+        custom_metric_card(val_workload, "% Workload")
+    with col4:
+        custom_metric_card(val_shipment, "Shipment Volume")
     
     st.subheader("Mối liên hệ giữa các chỉ số Overview")
-    # Biểu đồ kết hợp
     fig1 = go.Figure()
     fig1.add_trace(go.Bar(x=["Approved HC", "Required HC"], y=[approved_hc, required_hc], name="HC"))
-    # Thêm trục y thứ 2 cho Workload và Shipment để dễ nhìn (do chênh lệch scale)
     fig1.add_trace(go.Scatter(x=["% Workload"], y=[workload_pct], mode="markers+text", marker=dict(size=20, color="orange"), name="Workload", text=[f"{workload_pct:.1%}"], yaxis="y2"))
     
     fig1.update_layout(
@@ -124,8 +134,8 @@ if page == "Overview":
     st.plotly_chart(fig1, use_container_width=True)
 
 
-elif page == "HC Status":
-    st.title("HC Status")
+elif page == "2. HC Overview":
+    st.title("Trang 2: HC Overview")
     
     hc_filtered = filter_by_month(df_hc)
     
@@ -135,14 +145,22 @@ elif page == "HC Status":
     required_hc = hc_filtered['Required HC'].dropna().mean()
     workload_pct = hc_filtered['% Worload'].dropna().mean() if '% Worload' in hc_filtered.columns else hc_filtered['% Workload'].dropna().mean()
     
+    val_approved = f"{approved_hc}"
+    val_available = f"{available_hc:.2f}" if not np.isnan(available_hc) else "0"
+    val_required = f"{required_hc:.2f}" if not np.isnan(required_hc) else "0"
+    val_workload = f"{workload_pct * 100:.2f}%" if not np.isnan(workload_pct) else "0%"
+
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Approved HC", approved_hc)
-    col2.metric("Available HC", f"{available_hc:.2f}" if not np.isnan(available_hc) else "0")
-    col3.metric("Required HC", f"{required_hc:.2f}" if not np.isnan(required_hc) else "0")
-    col4.metric("% Workload", f"{workload_pct * 100:.2f}%" if not np.isnan(workload_pct) else "0%")
+    with col1:
+        custom_metric_card(val_approved, "Approved HC")
+    with col2:
+        custom_metric_card(val_available, "Available HC")
+    with col3:
+        custom_metric_card(val_required, "Required HC")
+    with col4:
+        custom_metric_card(val_workload, "% Workload")
     
     st.subheader("Mối liên hệ giữa các chỉ số HC")
-    # Biểu đồ bar chart so sánh các HC
     fig_hc = go.Figure(data=[
         go.Bar(name='HC Metrics', x=['Approved HC', 'Available HC', 'Required HC'], y=[approved_hc, available_hc, required_hc], text=[f"{approved_hc}", f"{available_hc:.1f}", f"{required_hc:.1f}"], textposition='auto')
     ])
@@ -166,17 +184,22 @@ elif page == "HC Status":
     st.dataframe(df_cs_fte[valid_cols], use_container_width=True, hide_index=True)
 
 
-elif page == "Monthly Volume":
-    st.title("Monthly Volume")
+elif page == "3. Monthly Volume":
+    st.title("Trang 3: Monthly Volume")
     
     office_filtered = filter_by_month(df_office_fte)
     
     active_cust = office_filtered['Active customer'].dropna().mean()
     ship_vol = office_filtered['Shipment Volume'].dropna().mean()
     
+    val_cust = f"{active_cust:.2f}" if not np.isnan(active_cust) else "0"
+    val_ship = f"{ship_vol:,.2f}" if not np.isnan(ship_vol) else "0"
+
     col1, col2 = st.columns(2)
-    col1.metric("Active Customer (Avg)", f"{active_cust:.2f}" if not np.isnan(active_cust) else "0")
-    col2.metric("Shipment Volume (Avg)", f"{ship_vol:,.2f}" if not np.isnan(ship_vol) else "0")
+    with col1:
+        custom_metric_card(val_cust, "Active Customer (Avg)")
+    with col2:
+        custom_metric_card(val_ship, "Shipment Volume (Avg)")
     
     st.subheader("Active Customer Trend")
     if not office_filtered.empty:
@@ -194,8 +217,16 @@ elif page == "Monthly Volume":
     st.dataframe(office_filtered, use_container_width=True, hide_index=True)
     
     st.markdown("**Bảng Monthly Volume**")
-    # Lọc cột tháng của Monthly volume
     vol_cols = ["No", "Customer"] + [m for m in selected_months if m in df_monthly_vol.columns]
     if "Total" in df_monthly_vol.columns:
         vol_cols.append("Total")
     st.dataframe(df_monthly_vol[vol_cols], use_container_width=True, hide_index=True)
+```eof
+
+### Thay đổi chính:
+1. Tạo hàm `custom_metric_card(value, label)` render khối thẻ bằng HTML/CSS.
+2. Thiết lập kiểu dáng cho ô thông tin:
+   - Nền màu xám nhạt (`background-color: #f1f3f5`).
+   - Bo tròn 12px (`border-radius: 12px`).
+   - Số chữ in đậm kích thước 32px đặt ở dòng trên.
+   - Chữ nhãn kích thước 14px, màu xám trầm hơn đặt ở dòng dưới.
