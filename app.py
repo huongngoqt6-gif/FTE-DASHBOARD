@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-DATA_FILE = Path("FTE dashboard data.xlsx")
+DATA_FILE = Path("data.xlsx")
 
 st.title("📊 Dashboard Training")
 st.caption("CS HAD | Internal Training Material | 2026")
