@@ -14,12 +14,18 @@ st.set_page_config(
 # Custom CSS giao diện
 st.markdown("""
     <style>
-    /* 1. Nền giao diện chính màu xám nhạt */
-    .stApp {
-        background-color: #f4f6f9;
+    /* 1. Bao trùm màu nền xám nhạt cho toàn bộ khung ứng dụng & header trên cùng */
+    .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+        background-color: #f4f6f9 !important;
     }
     
-    /* 2. Thanh Sidebar (khu vực lựa chọn trang & tháng) màu Xanh Navy đậm */
+    /* 2. Loại bỏ padding đỉnh giúp trang bên phải đẩy cao lên sát mép trên bằng sidebar */
+    .main .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* 3. Thanh Sidebar (khu vực lựa chọn trang & tháng) màu Xanh Navy đậm */
     [data-testid="stSidebar"] {
         background-color: #0b192c !important;
     }
@@ -35,25 +41,28 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* 3. Thu nhỏ Header và đổi màu chữ sang Xanh Navy */
+    /* 4. Thu nhỏ kích thước tiêu đề hơn nữa */
     h1, .stTitle {
-        font-size: 24px !important;
+        font-size: 18px !important;
         color: #0b192c !important;
         font-weight: 700 !important;
-        padding-top: 5px !important;
-        padding-bottom: 5px !important;
+        margin-top: 0px !important;
+        padding-top: 0px !important;
+        padding-bottom: 2px !important;
     }
     
     h2, h3, .stHeader {
-        font-size: 18px !important;
+        font-size: 15px !important;
         color: #1e3e62 !important;
         font-weight: 600 !important;
+        margin-top: 5px !important;
+        padding-bottom: 2px !important;
     }
     
     /* Tùy chỉnh vạch phân cách */
     hr {
-        margin-top: 5px !important;
-        margin-bottom: 15px !important;
+        margin-top: 4px !important;
+        margin-bottom: 10px !important;
         border-color: #cbd5e1 !important;
     }
     </style>
