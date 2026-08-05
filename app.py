@@ -154,14 +154,16 @@ if page == "Overview":
     # Lọc dữ liệu sheet HC
     hc_filtered = filter_by_month(df_hc)
     
-    # Xác định tên cột Shipment volume (Cột G trong sheet HC)
-    shipment_col = None
-    for col in hc_filtered.columns:
-        if 'Shipment' in col.lower() and 'Volume' in col.lower():
-            shipment_col = col
-            break
-    if not shipment_col and len(hc_filtered.columns) >= 7:
-        shipment_col = hc_filtered.columns[6] # Lấy cột chỉ số 6 (Cột G) nếu tên không khớp tuyệt đối
+    if not hc_filtered.empty:
+        # Ép kiểu số trực tiếp cho cột Shipment Volume
+        if 'Shipment Volume' in hc_filtered.columns:
+            hc_filtered['Shipment Volume'] = (
+                hc_filtered['Shipment Volume']
+                .astype(str)
+                .str.replace(',', '')
+                .str.replace(' ', '')
+            )
+            hc_filtered['Shipment Volume'] = pd.to_numeric(hc_filtered['Shipment Volume'], errors='coerce').fillna(0)
     
    # Tính toán Metrics
     approved_hc = 11
