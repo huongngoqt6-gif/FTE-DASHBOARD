@@ -87,6 +87,7 @@ def custom_metric_card(value, label):
         ">{label}</div>
     </div>
     """, unsafe_allow_html=True)
+
 # TIÊU ĐỀ CHUNG HIỂN THỊ TRÊN TẤT CẢ CÁC TRANG
 st.title("CSHAD - VOLUME & FTE DASHBOARD")
 st.divider()
@@ -102,7 +103,7 @@ if page == "Overview":
     required_hc = hc_filtered['Required HC'].dropna().mean()
     workload_pct = hc_filtered['% Worload'].dropna().mean() if '% Worload' in hc_filtered.columns else hc_filtered['% Workload'].dropna().mean()
     
-    # Lọc shipment volume (Trung bình tổng volume các cột tháng được chọn trong Monthly volume)
+    # Lọc shipment volume
     valid_month_cols = [m for m in selected_months if m in df_monthly_vol.columns]
     if valid_month_cols:
         shipment_volume = df_monthly_vol[valid_month_cols].sum().mean()
@@ -162,13 +163,54 @@ elif page == "HC Status":
     with col4:
         custom_metric_card(val_workload, "% Workload")
     
-    st.subheader("Mối liên hệ giữa các chỉ số HC")
-    fig_hc = go.Figure(data=[
-        go.Bar(name='HC Metrics', x=['Approved HC', 'Available HC', 'Required HC'], y=[approved_hc, available_hc, required_hc], text=[f"{approved_hc}", f"{available_hc:.1f}", f"{required_hc:.1f}"], textposition='auto')
-    ])
-    fig_hc.add_trace(go.Scatter(name='% Workload', x=['Approved HC', 'Available HC', 'Required HC'], y=[workload_pct, workload_pct, workload_pct], yaxis='y2', mode='lines+markers'))
-    fig_hc.update_layout(yaxis2=dict(overlaying='y', side='right', tickformat='.0%'))
-    st.plotly_chart(fig_hc, use_container_width=True)
+    st.subheader("Mối liên hệ & khoảng Gap giữa Available HC vs Required HC theo tháng")
+    if not hc_filtered.empty:
+        fig_hc = go.Figure()
+
+        # Đường 1: Required HC
+        fig_hc.add_trace(go.Scatter(
+            x=hc_filtered['Month'],
+            y=hc_filtered['Required HC'],
+            mode='lines+markers+text',
+            name='Required HC',
+            text=hc_filtered['Required HC'].round(1),
+            textposition='top center',
+            line=dict(color='#ef4444', width=2.5)
+        ))
+
+        # Đường 2: Available HC + Fill màu khoảng Gap tới Required HC
+        fig_hc.add_trace(go.Scatter(
+            x=hc_filtered['Month'],
+            y=hc_filtered['Available HC'],
+            mode='lines+markers+text',
+            name='Available HC',
+            text=hc_filtered['Available HC'].round(1),
+            textposition='bottom center',
+            line=dict(color='#22c55e', width=2.5),
+            fill='tonexty',
+            fillcolor='rgba(239, 68, 68, 0.15)'
+        ))
+
+        # Đường 3: Approved HC (Nét đứt)
+        fig_hc.add_trace(go.Scatter(
+            x=hc_filtered['Month'],
+            y=hc_filtered['Approved HC'],
+            mode='lines+markers+text',
+            name='Approved HC',
+            text=hc_filtered['Approved HC'],
+            textposition='top center',
+            line=dict(color='#3b82f6', width=2, dash='dash')
+        ))
+
+        fig_hc.update_layout(
+            xaxis_title="Tháng",
+            yaxis_title="Headcount (HC)",
+            hovermode="x unified",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        )
+        st.plotly_chart(fig_hc, use_container_width=True)
+    else:
+        st.warning("Không có dữ liệu cho các tháng đã chọn.")
     
     st.subheader("Trend FTE theo từng tháng và CS PIC")
     cs_filtered = filter_by_month(df_cs_fte_melted)
