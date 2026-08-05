@@ -53,7 +53,7 @@ df_cs_fte_melted = df_cs_fte.melt(id_vars=["CS PIC"], var_name="Month", value_na
 df_cs_fte_melted = df_cs_fte_melted[df_cs_fte_melted['FTE'].notna()]
 
 # CHỌN TRANG
-page = st.sidebar.radio("Chọn Trang", ["1. Overview", "2. HC Overview", "3. Monthly Volume"])
+page = st.sidebar.radio("DASHBOARD MENU", ["Overview", "HC Status", "Monthly Volume"])
 
 # HÀM LỌC DỮ LIỆU CHUNG
 def filter_by_month(df, month_col="Month"):
@@ -61,8 +61,8 @@ def filter_by_month(df, month_col="Month"):
         return df.iloc[0:0] # Trả về df rỗng nếu không chọn tháng nào
     return df[df[month_col].astype(str).isin(selected_months)].copy()
 
-if page == "1. Overview":
-    st.title("Trang 1: Overview")
+if page == "Overview":
+    st.title("Monthly Volume & FTE Overview")
     
     # Lọc dữ liệu
     hc_filtered = filter_by_month(df_hc)
@@ -99,8 +99,8 @@ if page == "1. Overview":
     st.plotly_chart(fig1, use_container_width=True)
 
 
-elif page == "2. HC Overview":
-    st.title("Trang 2: HC Overview")
+elif page == "HC Overview":
+    st.title("HC Status")
     
     hc_filtered = filter_by_month(df_hc)
     
@@ -141,8 +141,8 @@ elif page == "2. HC Overview":
     st.dataframe(df_cs_fte[valid_cols], use_container_width=True, hide_index=True)
 
 
-elif page == "3. Monthly Volume":
-    st.title("Trang 3: Monthly Volume")
+elif page == "Monthly Volume":
+    st.title("Monthly Volume")
     
     office_filtered = filter_by_month(df_office_fte)
     
