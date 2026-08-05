@@ -61,8 +61,9 @@ st.markdown("""
     
     /* 5. Vạch phân cách & Tạo khoảng cách 3-4 dòng trống (50px) bên dưới tiêu đề chính */
     hr {
-        margin-top: 4px !important;
+        margin-top: 1px !important;
         margin-bottom: 50px !important;
+        border-color: #cbd5e1 !important;
     }
     </style>
 """, unsafe_allow_html=True)
