@@ -157,7 +157,7 @@ if page == "Overview":
     # Xác định tên cột Shipment volume (Cột G trong sheet HC)
     shipment_col = None
     for col in hc_filtered.columns:
-        if 'shipment' in col.lower() and 'volume' in col.lower():
+        if 'Shipment' in col.lower() and 'Volume' in col.lower():
             shipment_col = col
             break
     if not shipment_col and len(hc_filtered.columns) >= 7:
