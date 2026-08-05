@@ -1,0 +1,27 @@
+BỘ CÀI PHẦN MỀM - LINK CHÍNH THỨC
+
+1. Python for Windows:
+https://www.python.org/downloads/windows/
+Khuyến nghị cho người mới: Windows installer 64-bit.
+Khi cài đặt phải chọn Add Python to PATH.
+
+2. Visual Studio Code:
+https://code.visualstudio.com/download
+Khuyến nghị: Windows User Installer x64.
+
+3. Git for Windows (không bắt buộc nếu upload trực tiếp trên website GitHub):
+https://git-scm.com/install/windows
+
+4. GitHub:
+https://github.com/signup
+
+5. Streamlit Community Cloud:
+https://share.streamlit.io/
+
+6. Extension Python cho VS Code:
+Mở VS Code > Extensions > tìm “Python” do Microsoft phát hành > Install.
+
+LƯU Ý
+- Không nên nhận file .exe từ nguồn không rõ ràng.
+- Nên tải trực tiếp từ trang chính thức để có phiên bản mới và bản vá bảo mật.
+- Máy công ty có thể cần quyền Administrator hoặc sự hỗ trợ của IT.
