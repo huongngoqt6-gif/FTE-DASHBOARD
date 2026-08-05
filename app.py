@@ -43,7 +43,7 @@ months_list = df_hc['Month'].dropna().astype(str).unique().tolist()
 # BỘ LỌC THÁNG (Sidebar)
 st.sidebar.header("Filter")
 selected_months = st.sidebar.multiselect(
-    "Chọn Tháng",
+    "By month",
     options=months_list,
     default=months_list
 )
