@@ -138,7 +138,7 @@ def custom_metric_card(value, label):
         <div style="
             font-size: 14px;
             font-weight: 500;
-            color: #F97316;
+            color: #64748b;
             margin-top: 6px;
         ">{label}</div>
     </div>
