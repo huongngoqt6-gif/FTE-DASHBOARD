@@ -221,12 +221,3 @@ elif page == "3. Monthly Volume":
     if "Total" in df_monthly_vol.columns:
         vol_cols.append("Total")
     st.dataframe(df_monthly_vol[vol_cols], use_container_width=True, hide_index=True)
-```eof
-
-### Thay đổi chính:
-1. Tạo hàm `custom_metric_card(value, label)` render khối thẻ bằng HTML/CSS.
-2. Thiết lập kiểu dáng cho ô thông tin:
-   - Nền màu xám nhạt (`background-color: #f1f3f5`).
-   - Bo tròn 12px (`border-radius: 12px`).
-   - Số chữ in đậm kích thước 32px đặt ở dòng trên.
-   - Chữ nhãn kích thước 14px, màu xám trầm hơn đặt ở dòng dưới.
