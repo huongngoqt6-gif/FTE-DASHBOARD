@@ -200,9 +200,9 @@ elif page == "HC Status":
     
     # Metrics
     approved_hc = 11
-    available_hc = hc_filtered['Available HC'].dropna().mean()
     required_hc = hc_filtered['Required HC'].dropna().mean()
     workload_pct = hc_filtered['% Worload'].dropna().mean() if '% Worload' in hc_filtered.columns else hc_filtered['% Workload'].dropna().mean()
+    available_hc = hc_filtered['Available HC'].dropna().mean()
     
     val_approved = f"{approved_hc}"
     val_available = f"{available_hc:.2f}" if not np.isnan(available_hc) else "0"
@@ -219,62 +219,67 @@ elif page == "HC Status":
     with col4:
         custom_metric_card(val_workload, "% Workload")
     
-    st.subheader("VOLUME & HC TREND")
+    st.subheader("Mối liên hệ & khoảng Gap giữa Available HC vs Required HC theo tháng")
     if not hc_filtered.empty:
         fig_hc = go.Figure()
 
-       # Đường 1: Required HC
+        # Đường 1: Required HC
         fig_hc.add_trace(go.Scatter(
-        x=hc_filtered['Month'],
-        y=hc_filtered['Required HC'],
-        mode='lines+markers+text',
-        name='Required HC',
-        text=hc_filtered['Required HC'].round(1),
-        textposition='top center',
-        line=dict(color='#ef4444', width=2.5)
+            x=hc_filtered['Month'],
+            y=hc_filtered['Required HC'],
+            mode='lines+markers+text',
+            name='Required HC',
+            text=hc_filtered['Required HC'].round(1),
+            textposition='top center',
+            line=dict(color='#ef4444', width=2.5)
         ))
+
         # Đường 2: Available HC + Fill màu khoảng Gap tới Required HC
         fig_hc.add_trace(go.Scatter(
-        x=hc_filtered['Month'],
-        y=hc_filtered['Available HC'],
-        mode='lines+markers+text',
-        name='Available HC',
-        text=hc_filtered['Available HC'].round(1),
-        textposition='bottom center',
-        line=dict(color='#22c55e', width=2.5),
-        fill='tonexty',
-        fillcolor='rgba(239, 68, 68, 0.15)'
+            x=hc_filtered['Month'],
+            y=hc_filtered['Available HC'],
+            mode='lines+markers+text',
+            name='Available HC',
+            text=hc_filtered['Available HC'].round(1),
+            textposition='bottom center',
+            line=dict(color='#22c55e', width=2.5),
+            fill='tonexty',
+            fillcolor='rgba(239, 68, 68, 0.15)'
         ))
+
         # Đường 3: Approved HC (Nét đứt)
         fig_hc.add_trace(go.Scatter(
-        x=hc_filtered['Month'],
-        y=hc_filtered['Approved HC'],
-        mode='lines+markers+text',
-        name='Approved HC',
-        text=hc_filtered['Approved HC'],
-        textposition='top center',
-        line=dict(color='#3b82f6', width=2, dash='dash')
+            x=hc_filtered['Month'],
+            y=hc_filtered['Approved HC'],
+            mode='lines+markers+text',
+            name='Approved HC',
+            text=hc_filtered['Approved HC'],
+            textposition='top center',
+            line=dict(color='#3b82f6', width=2, dash='dash')
         ))
-       fig_hc.update_layout(
-        xaxis_title="Tháng",
-        yaxis_title="Headcount (HC)",
-        hovermode="x unified",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(t=20, b=20, l=20, r=20)
+
+        fig_hc.update_layout(
+            xaxis_title="Tháng",
+            yaxis_title="Headcount (HC)",
+            hovermode="x unified",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(t=20, b=20, l=20, r=20)
         )
         st.plotly_chart(fig_hc, use_container_width=True)
     else:
         st.warning("Không có dữ liệu cho các tháng đã chọn.")
-        st.subheader("Trend FTE theo từng tháng và CS PIC")
+    
+    st.subheader("Trend FTE theo từng tháng và CS PIC")
     cs_filtered = filter_by_month(df_cs_fte_melted)
     if not cs_filtered.empty:
         fig_trend = px.line(cs_filtered, x="Month", y="FTE", color="CS PIC", markers=True)
         fig_trend.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(t=20, b=20, l=20, r=20))
         st.plotly_chart(fig_trend, use_container_width=True)
     else:
-        st.warning("Không có dữ liệu cho các tháng đã chọn.") 
+        st.warning("Không có dữ liệu cho các tháng đã chọn.")
+        
     st.subheader("Dữ liệu chi tiết")
     st.markdown("**Bảng HC**")
     st.dataframe(hc_filtered, use_container_width=True, hide_index=True)
