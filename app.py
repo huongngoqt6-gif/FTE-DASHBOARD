@@ -63,7 +63,6 @@ st.markdown("""
     hr {
         margin-top: 4px !important;
         margin-bottom: 50px !important;
-        border-color: #cbd5e1 !important;
     }
     </style>
 """, unsafe_allow_html=True)
