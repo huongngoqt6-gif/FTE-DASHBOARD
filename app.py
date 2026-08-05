@@ -41,7 +41,7 @@ df_hc, df_monthly_vol, df_office_fte, df_cs_fte = load_data()
 months_list = df_hc['Month'].dropna().astype(str).unique().tolist()
 
 # BỘ LỌC THÁNG (Sidebar)
-st.sidebar.header("Bộ lọc")
+st.sidebar.header("Filter")
 selected_months = st.sidebar.multiselect(
     "Chọn Tháng",
     options=months_list,
@@ -53,7 +53,7 @@ df_cs_fte_melted = df_cs_fte.melt(id_vars=["CS PIC"], var_name="Month", value_na
 df_cs_fte_melted = df_cs_fte_melted[df_cs_fte_melted['FTE'].notna()]
 
 # CHỌN TRANG
-page = st.sidebar.radio("Chọn Trang", ["Overview", "HC Status", "Monthly Volume"])
+page = st.sidebar.radio("Select data", ["Overview", "HC Status", "Monthly Volume"])
 
 # HÀM LỌC DỮ LIỆU CHUNG
 def filter_by_month(df, month_col="Month"):
