@@ -99,7 +99,7 @@ if page == "Overview":
     st.plotly_chart(fig1, use_container_width=True)
 
 
-elif page == "HC Overview":
+elif page == "HC Status":
     st.title("HC Status")
     
     hc_filtered = filter_by_month(df_hc)
