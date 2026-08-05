@@ -41,7 +41,7 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* 4. Thu nhỏ kích thước tiêu đề hơn nữa */
+    /* 4. Thu nhỏ kích thước tiêu đề */
     h1, .stTitle {
         font-size: 18px !important;
         color: #0b192c !important;
@@ -59,10 +59,10 @@ st.markdown("""
         padding-bottom: 2px !important;
     }
     
-    /* Tùy chỉnh vạch phân cách */
+    /* 5. Vạch phân cách & Tạo khoảng cách 3-4 dòng trống (50px) bên dưới tiêu đề chính */
     hr {
         margin-top: 4px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 50px !important;
         border-color: #cbd5e1 !important;
     }
     </style>
