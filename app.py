@@ -60,7 +60,32 @@ def filter_by_month(df, month_col="Month"):
     if not selected_months:
         return df.iloc[0:0] # Trả về df rỗng nếu không chọn tháng nào
     return df[df[month_col].astype(str).isin(selected_months)].copy()
-
+# HÀM TẠO CARD THÔNG TIN (Số ở trên, Chữ ở dưới, ô xám bo tròn)
+def custom_metric_card(value, label):
+    st.markdown(f"""
+    <div style="
+        background-color: #f1f3f5;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 18px 12px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        margin-bottom: 15px;
+    ">
+        <div style="
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.2;
+        ">{value}</div>
+        <div style="
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 6px;
+        ">{label}</div>
+    </div>
+    """, unsafe_allow_html=True)
 if page == "Overview":
     st.title("Monthly Volume & FTE Overview")
     
